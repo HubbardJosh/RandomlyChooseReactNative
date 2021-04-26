@@ -3,8 +3,7 @@ import * as React from 'react';
 import { useNavigation } from "@react-navigation/native";
 
 export default function LoadListScreen({Navigation}) {
-      const screenSize =
-        Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
+      const screenSize = Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
       const navigation = useNavigation();
       return(
             <View style={{height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center'}}>

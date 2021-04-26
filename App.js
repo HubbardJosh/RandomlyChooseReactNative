@@ -9,13 +9,9 @@ const Stack = createStackNavigator();
 export default function App() {
   
   return (
-    // <View>
-    //   <Text>Main Screen</Text>
-    // </View>
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="Main" headerMode="none" screenOptions={{}}>
+      <Stack.Navigator initialRouteName="Main" headerMode="none" mode="modal">
         <Stack.Screen name="Main" component={MainScreen}/>
-        {/* <Stack.Screen name="Main" component={MainScreen} /> */}
         <Stack.Screen name="LoadList" component={LoadListScreen} />
       </Stack.Navigator>
     </NavigationContainer>
