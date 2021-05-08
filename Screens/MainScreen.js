@@ -16,7 +16,7 @@ export default function MainScreen() {
       const renderList = ({item}) => {
             return (
                   <View style={{height: 50, paddingTop: 10, justifyContent: 'center', borderBottomWidth: 0.2, borderBottomColor: '#fff',}}>
-                        <Text style={{fontSize: 25, fontWeight: '400', color: '#fff'}}>
+                        <Text style={{fontSize: 25, fontWeight: '300', color: '#fff'}}>
                               {item}
                         </Text>
                   </View>
@@ -37,7 +37,7 @@ export default function MainScreen() {
                         <TextInput 
                               placeholder="Enter text here" 
                               placeholderTextColor="#000"
-                              style={{width: (screenSize.width - 35 - (screenSize.width / 5)), paddingLeft: 3, backgroundColor: '#888', borderRadius: 3, fontSize: 20, fontWeight: '500', color: '#fff'}} 
+                              style={{width: (screenSize.width - 35 - (screenSize.width / 5)), paddingLeft: 3, backgroundColor: '#888', borderRadius: 3, fontSize: 20, fontWeight: '400', color: '#fff'}} 
                               onChangeText={(text) => setEntryNotEntered(text)}
                               value={entryNotEntered}
                               />
@@ -45,7 +45,7 @@ export default function MainScreen() {
                               navigation.navigate("LoadList");
                         }}>
                               <View style={{height: baseHeightUnit, width: ((screenSize.width / 5) + 20), backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '600'}}>Save/Load</Text>
+                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Save/Load</Text>
                               </View>
                         </TouchableOpacity>
                   </View>
@@ -77,7 +77,7 @@ export default function MainScreen() {
                               }
                         }}>
                               <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '600'}}>Enter</Text>
+                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Enter</Text>
                               </View>
                         </TouchableOpacity>
 
@@ -86,7 +86,7 @@ export default function MainScreen() {
                                     navigation.navigate("LoadList");
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '600'}}>Choose x1</Text>
+                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x1</Text>
                                     </View>
                               </TouchableOpacity>
 
@@ -94,7 +94,7 @@ export default function MainScreen() {
                                     navigation.navigate("LoadList");
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 6, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '600'}}>Choose x10</Text>
+                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x10</Text>
                                     </View>
                               </TouchableOpacity>
 
@@ -102,7 +102,7 @@ export default function MainScreen() {
                                     navigation.navigate("LoadList");
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '600'}}>Choose X</Text>
+                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose X</Text>
                                     </View>
                               </TouchableOpacity>
                         </View>
@@ -111,11 +111,11 @@ export default function MainScreen() {
                               setThisList([]);
                         }}>
                               <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '600'}}>Clear List</Text>
+                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Clear List</Text>
                               </View>
                         </TouchableOpacity>
                   </View>
-                  <View style={{height: 50, width: 320, backgroundColor: '#fff', alignSelf: 'center', marginTop: 10}}>
+                  <View style={{position: 'absolute', bottom: 30, height: 50, width: 320, backgroundColor: '#fff', alignSelf: 'center', marginTop: 10}}>
 
                   </View>
             </View>
