@@ -7,11 +7,20 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 export default function MainScreen() {
       const screenSize = Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
       const navigation = useNavigation();
-      const [thisList, setThisList] = useState([]);
+
       var [entryNotEntered, setEntryNotEntered] = useState("");
-      var saving = false;
       var [entryMessage, setEntryMessage] = useState("");
       const baseHeightUnit = screenSize.height / 25;
+
+      const [lists, setLists] = useState([]);
+      const [titles, setTitles] = useState([]);
+
+      const [listTitle, setListTitle] = useState("");
+      const [thisList, setThisList] = useState([]);
+
+      const [saveLoad, setSaveLoad] = useState(false);
+      const [loading, setLoading] = useState(false);
+      const [saving, setSaving] = useState(false);
 
       const renderList = ({item}) => {
             return (
@@ -31,6 +40,87 @@ export default function MainScreen() {
             }, 5000);
       }
 
+      function saveList (title, list) {
+            // alert(lists.length);
+            // alert(thisList)
+            // lists.push(list);
+            var listArray = [];
+            listArray.push(lists);
+            listArray.push([list]);
+            setLists(listArray);
+            var titleArray = [];
+            titleArray.push(titles);
+            titleArray.push(title);
+            setTitles(titleArray);
+            // titles.push(title);
+            
+            // alert(lists.length);
+            storeLists(listArray);
+            storeTitles(titleArray);
+      }
+
+      const storeLists = async (list) => {
+            try {
+                  const jsonValue = JSON.stringify(list)
+                  await AsyncStorage.setItem('@lists', jsonValue)
+            } catch (e) {
+                  alert(e);
+            }
+      }
+
+
+
+      const storeTitles = async (title) => {
+            try {
+                  const jsonValue = JSON.stringify(title)
+                  await AsyncStorage.setItem('@titles', jsonValue)
+            } catch (e) {
+                  alert(e);
+            }
+      }
+
+      
+
+      useEffect (() => {
+            const getTitles = async () => {
+                  try {
+                        const jsonValue = await AsyncStorage.getItem('@titles')
+                        return jsonValue != null ? JSON.parse(jsonValue) : null;
+                  } catch (e) {
+                        alert(e);
+                  }
+            }
+
+            const getLists = async () => {
+                  try {
+                        const jsonValue = await AsyncStorage.getItem('@lists')
+                        return jsonValue != null ? JSON.parse(jsonValue) : null;
+                  } catch (e) {
+                        alert(e);
+                  }
+            }
+            alert(lists.length);
+            // if (getLists != undefined && getTitles != undefined) {
+                  setLists(getLists);
+                  setTitles(getTitles);
+            // }
+            alert(lists.length);
+            // if (lists.length > 0) {
+            //       // titles.forEach((x) => {
+            //       //       alert(x);
+            //       // })
+            //       // alert(lists);
+            //       // alert(titles);
+            //       // alert(lists.length);
+            //       var count = 0;
+            //       lists.forEach((x) => {
+            //             alert(count + "  " + x);
+            //             count += 1;
+            //       })
+            // }
+            
+      }, [titles.length])
+
       return(
             <View style={{height: screenSize.height, width: screenSize.width, paddingTop: Platform.OS == "android" ? baseHeightUnit + 10 : baseHeightUnit * 2, backgroundColor: '#222123'}}>
                   <View style={{flexDirection: 'row', justifyContent: 'center'}}>
@@ -42,13 +132,15 @@ export default function MainScreen() {
                               value={entryNotEntered}
                               />
                         <TouchableOpacity style={{paddingLeft: 5}} onPress={() => {
-                              navigation.navigate("LoadList");
+                              setSaveLoad(true);
                         }}>
                               <View style={{height: baseHeightUnit, width: ((screenSize.width / 5) + 20), backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
                                     <Text style={{fontSize: 20, fontWeight: '400'}}>Save/Load</Text>
                               </View>
                         </TouchableOpacity>
                   </View>
+
+
 
                   <View style={{justifyContent: 'center', alignItems: 'center', height: ((baseHeightUnit * 14) - 20), paddingBottom: 5, paddingTop: 10}}>
                         <FlatList 
@@ -115,6 +207,55 @@ export default function MainScreen() {
                               </View>
                         </TouchableOpacity>
                   </View>
+
+                  {saveLoad ? (
+                        <View style={{position: 'absolute', elevation: 999, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center'}}>
+                              <View style={{position: 'absolute', elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
+                                    {/* <View style={{height: 10}} /> */}
+
+                                    {saving ? 
+                                    (
+                                          <TextInput style={{paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
+                                          onChangeText={(text) => setListTitle(text)}
+                                          placeholder="Enter title for list"
+                                          />
+                                    ) : 
+                                    (
+                                          <TouchableOpacity onPress={() => {
+                                                setLoading(true);
+                                          }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                                <Text>Load</Text>
+                                          </TouchableOpacity>
+                                    )}
+                                    
+
+                                    <View style={{height: 5}} />
+                                    
+                                    <TouchableOpacity onPress={() => {
+                                          if (saving) {
+                                                saveList(listTitle, thisList);
+                                                setSaving(false);
+                                                setSaveLoad(false);
+                                          } else {
+                                                setSaving(true);
+                                          }
+                                          
+
+                                    }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                          <Text>Save</Text>
+                                    </TouchableOpacity>
+
+                                    <View style={{height: 5}} />
+                                    
+                                    <TouchableOpacity onPress={() => {
+                                          setSaveLoad(false);
+                                    }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                          <Text>Cancel</Text>
+                                    </TouchableOpacity>
+                              </View>
+                        </View>
+                  ) : (<View style={{height: 0, width: 0}}></View>)}
+
                   <View style={{position: 'absolute', bottom: 30, height: 50, width: 320, backgroundColor: '#fff', alignSelf: 'center', marginTop: 10}}>
 
                   </View>
