@@ -232,7 +232,7 @@ export default function MainScreen() {
                   <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                         <TextInput 
                               placeholder="Enter text here" 
-                              placeholderTextColor="#000"
+                              placeholderTextColor="#bbb"
                               style={styles.enterTextInput} 
                               onChangeText={(text) => setEntryNotEntered(text)}
                               value={entryNotEntered}
@@ -349,6 +349,7 @@ export default function MainScreen() {
                                           <TextInput style={styles.saveChooseXInput} 
                                           onChangeText={(text) => setListTitle(text)}
                                           placeholder="Enter title for list"
+                                          placeholderTextColor='#bbb'
                                           />
                                     ) : 
                                     (
@@ -396,8 +397,9 @@ export default function MainScreen() {
                         <View style={styles.saveLoadChooseXBackground}>
                               <View style={styles.modalView}>
                                     <TextInput style={styles.saveChooseXInput} 
-                                          onChangeText={(text) => setNumTimes(text)}
+                                          onChangeText={(text) => setNumTimes(parseInt(text))}
                                           placeholder="Enter a number: 1 - 1,000,000"
+                                          placeholderTextColor="#bbb"
                                           keyboardType="number-pad"
                                           returnKeyType="done"
                                           />
@@ -407,10 +409,14 @@ export default function MainScreen() {
                                                       randomChoiceX(thisList, numTimes);
                                                 } else {
                                                       if (numTimes != 0) {
-                                                            displayEntryMessage("Invalid entry. Enter a number from range 1 - 1,000,000");
+                                                            displayEntryMessage("Invalid entry. Enter a number: 1 - 1,000,000");
+                                                      } else {
+                                                            displayEntryMessage("No entry. Enter a number: 1 - 1,000,000")
                                                       }
                                                 }
+                                                setChoiceMade(false);
                                                 setEnteringNumTimes(false);
+                                                setNumTimes(0);
                                           }}
                                     >
                                           <Text style={styles.buttonText}>Done</Text>

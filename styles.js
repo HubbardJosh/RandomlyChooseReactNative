@@ -7,19 +7,20 @@ export const styles = StyleSheet.create({
     saveLoadButton: {
         height: baseHeightUnit, 
         width: ((screenSize.width / 5) + 20), 
-        backgroundColor: '#888', 
+        backgroundColor: '#4c4c4c', 
         justifyContent: 'center', 
         alignItems: 'center', 
         borderRadius: 3
     },
     buttonText: {
         fontSize: 20, 
-        fontWeight: '400'
+        fontWeight: '400',
+        color: '#fff'
     },
     enterClearButton: {
         height: baseHeightUnit * 1.5, 
         width: screenSize.width - 10, 
-        backgroundColor: '#888', 
+        backgroundColor: '#4c4c4c', 
         justifyContent: 'center', 
         alignItems: 'center', 
         borderRadius: 3
@@ -27,7 +28,7 @@ export const styles = StyleSheet.create({
     choiceButtons: {
         height: baseHeightUnit * 1.5, 
         width: (screenSize.width / 3) - 7, 
-        backgroundColor: '#888', 
+        backgroundColor: '#4c4c4c', 
         justifyContent: 'center', 
         alignItems: 'center', 
         borderRadius: 3
@@ -35,11 +36,11 @@ export const styles = StyleSheet.create({
     enterTextInput: {
         width: (screenSize.width - 35 - (screenSize.width / 5)), 
         paddingLeft: 3, 
-        backgroundColor: '#888', 
+        backgroundColor: '#4c4c4c', 
         borderRadius: 3, 
         fontSize: 20, 
         fontWeight: '400', 
-        color: '#fff'
+        color: '#fff',
     },
     loadSaveCancelButtons: {
         alignItems: 'center', 
@@ -47,7 +48,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center', 
         height: (screenSize.width / 1.5) / 4 - 10, 
         width: screenSize.width / 1.5 - 20, 
-        backgroundColor: '#777'
+        backgroundColor: '#4c4c4c'
     },
     chooseXDoneButton: {
         justifyContent: 'center', 
@@ -57,19 +58,20 @@ export const styles = StyleSheet.create({
         height: (screenSize.width / 1.5) / 4 - 10, 
         width: screenSize.width / 1.5 - 20, 
         marginTop: 5, 
-        backgroundColor: '#777'
+        backgroundColor: '#4c4c4c'
     },
     saveChooseXInput: {
         paddingLeft: 5, 
         borderRadius: 3, 
         height: (screenSize.width / 1.5) / 4 - 10, 
         width: screenSize.width / 1.5 - 20, 
-        backgroundColor: '#777'
+        backgroundColor: '#4c4c4c',
+        color: '#fff'
     },
     entryMessageText: {
         fontSize: 18,
         fontWeight: '400', 
-        color: '#fff'
+        color: '#000'
     },
     entryMessageView: {
         paddingVertical: 5, 
@@ -84,7 +86,7 @@ export const styles = StyleSheet.create({
         width: screenSize.width, 
         justifyContent: 'center', 
         alignItems: 'center', 
-        backgroundColor: 'rgba(100, 100, 100, 0.6)'
+        backgroundColor: 'rgba(50, 50, 50, 0.5)'
     },
     modalView: {
         position: 'absolute', 
@@ -97,16 +99,16 @@ export const styles = StyleSheet.create({
         alignContent: 'center'
     },
     flatlistText: {
-        fontSize: 25, 
+        fontSize: 22, 
         fontWeight: '300', 
-        color: '#fff'
+        color: '#000'
     },
     flatlistView: {
         height: 50, 
         paddingTop: 10, 
         justifyContent: 'center', 
-        borderBottomWidth: 0.2, 
-        borderBottomColor: '#fff'
+        borderBottomWidth: 0.3, 
+        borderBottomColor: '#777'
     },
     flatlistMainView: {
         justifyContent: 'center', 
@@ -119,7 +121,7 @@ export const styles = StyleSheet.create({
         height: screenSize.height, 
         width: screenSize.width, 
         paddingTop: Platform.OS == "android" ? baseHeightUnit + 10 : baseHeightUnit * 2, 
-        backgroundColor: '#222123'
+        backgroundColor: '#71cff4'
     },
     bottomButtonsView: {
         justifyContent: 'center', 
