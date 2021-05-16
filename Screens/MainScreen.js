@@ -18,12 +18,16 @@ export default function MainScreen() {
       const [listTitle, setListTitle] = useState("");
       const [thisList, setThisList] = useState([]);
 
+      const [modList, setModList] = useState([]);
+
       const [saveLoad, setSaveLoad] = useState(false);
       const [loading, setLoading] = useState(false);
       const [saving, setSaving] = useState(false);
 
       const [enteringNumTimes, setEnteringNumTimes] = useState(false);
       const [numTimes, setNumTimes] = useState(0);
+
+      const [choiceMade, setChoiceMade] = useState(false);
 
       const renderList = ({item}) => {
             return (
@@ -43,9 +47,45 @@ export default function MainScreen() {
             }, 5000);
       }
 
+      function displayModifiedList (list, countArray, winnerArray) {
+            var modifiedList = [];
+
+            for (let x = 0; x < list.length; x++) {
+                  modifiedList.push(list[x]);
+            }
+
+            for (let i = 0; i < list.length; i++) {
+                  // if (list[i] == x) {
+                        modifiedList[i] += (": " + countArray[i]);
+                  // }
+            }
+
+
+            for (let x = 0; x < winnerArray.length; x++) {
+                  for (let i = 0; i < list.length; i++) {
+                        if (list[i] == winnerArray[x]) {
+                              modifiedList[i] += " ☆";
+                        }
+                  }
+            }
+
+            setChoiceMade(true);
+            setModList(modifiedList);
+      }
+
       function randomChoice1X (list) {
             var randomNumber = Math.floor(Math.random() * list.length);
 
+            var modifiedList = [];
+
+            for (let x = 0; x < list.length; x++) {
+                  modifiedList.push(list[x]);
+            }
+
+            modifiedList[randomNumber] += " ☆";
+
+            setChoiceMade(true);
+            setModList(modifiedList);
             return list[randomNumber];
       }
 
@@ -78,6 +118,7 @@ export default function MainScreen() {
                   }
             }
 
+            displayModifiedList(list, countArray, mostArray);
             alert(countArray);
             return mostArray;
       }
@@ -110,6 +151,7 @@ export default function MainScreen() {
                   }
             }
 
+            displayModifiedList(list, countArray, mostArray);
             alert(countArray);
             return mostArray;
       }
@@ -217,12 +259,20 @@ export default function MainScreen() {
 
 
                   <View style={{justifyContent: 'center', alignItems: 'center', height: ((baseHeightUnit * 14) - 20), paddingBottom: 5, paddingTop: 10}}>
+                        {choiceMade ? <FlatList 
+                              renderItem={renderList}
+                              data={modList}
+                              keyExtractor={(x, i) => (x + i)}
+                              style={{width: screenSize.width - 10}}
+                        /> 
+                        : 
                         <FlatList 
                               renderItem={renderList}
                               data={thisList}
                               keyExtractor={(x, i) => (x + i)}
                               style={{width: screenSize.width - 10}}
-                        />
+                        />}
+                        
                   </View>
 
                   <View style={{paddingVertical: 5, paddingLeft: 10, height: baseHeightUnit, justifyContent: 'center'}}>
@@ -241,6 +291,7 @@ export default function MainScreen() {
                               } else {
                                     displayEntryMessage("Please enter text");
                               }
+                              setChoiceMade(false);
                         }}>
                               <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
                                     <Text style={{fontSize: 20, fontWeight: '400'}}>Enter</Text>
@@ -249,7 +300,12 @@ export default function MainScreen() {
 
                         <View style={{flexDirection: 'row', justifyContent: 'center', paddingVertical: 4}}>
                               <TouchableOpacity onPress={() => {
-                                    alert(randomChoice1X(thisList));
+                                    if (thisList.length > 1) {
+                                          alert(randomChoice1X(thisList));
+                                    } else {
+                                          displayEntryMessage("Enter at least two choices to list");
+                                    }
+                                    
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
                                           <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x1</Text>
@@ -257,7 +313,12 @@ export default function MainScreen() {
                               </TouchableOpacity>
 
                               <TouchableOpacity style={{paddingHorizontal: 5}} onPress={() => {
-                                    alert(randomChoice10X(thisList));
+                                    if (thisList.length > 1) {
+                                          alert(randomChoice10X(thisList));
+                                    } else {
+                                          displayEntryMessage("Enter at least two choices to list");
+                                    }
+                                    
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 6, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
                                           <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x10</Text>
@@ -265,7 +326,12 @@ export default function MainScreen() {
                               </TouchableOpacity>
 
                               <TouchableOpacity onPress={() => {
-                                    setEnteringNumTimes(true);
+                                    if (thisList.length > 1) {
+                                          setEnteringNumTimes(true);
+                                    } else {
+                                          displayEntryMessage("Enter at least two choices to list");
+                                    }
+                                    
                                     
                               }}>
                                     <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
@@ -276,6 +342,8 @@ export default function MainScreen() {
 
                         <TouchableOpacity onPress={() => {
                               setThisList([]);
+                              setModList([]);
+                              setChoiceMade(false);
                         }}>
                               <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
                                     <Text style={{fontSize: 20, fontWeight: '400'}}>Clear List</Text>
@@ -285,12 +353,12 @@ export default function MainScreen() {
 
                   {saveLoad ? (
                         <View style={{position: 'absolute', elevation: 9, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(100, 100, 100, 0.6)'}}>
-                              <View style={{position: 'absolute', elevation: 100, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
+                              <View style={{position: 'absolute', borderRadius: 3, elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
                                     {/* <View style={{height: 10}} /> */}
 
                                     {saving ? 
                                     (
-                                          <TextInput style={{paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
+                                          <TextInput style={{paddingLeft: 5, borderRadius: 3, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
                                           onChangeText={(text) => setListTitle(text)}
                                           placeholder="Enter title for list"
                                           />
@@ -298,7 +366,7 @@ export default function MainScreen() {
                                     (
                                           <TouchableOpacity onPress={() => {
                                                 setLoading(true);
-                                          }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                          }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
                                                 <Text>Load</Text>
                                           </TouchableOpacity>
                                     )}
@@ -316,7 +384,7 @@ export default function MainScreen() {
                                           }
                                           
 
-                                    }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                    }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
                                           <Text>Save</Text>
                                     </TouchableOpacity>
 
@@ -330,7 +398,7 @@ export default function MainScreen() {
                                           }
                                           
                                           
-                                    }} style={{alignItems: 'center', justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
+                                    }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
                                           <Text>Cancel</Text>
                                     </TouchableOpacity>
                               </View>
@@ -338,17 +406,15 @@ export default function MainScreen() {
                   ) : (<View style={{height: 0, width: 0}}></View>)}
 
                   { enteringNumTimes ? (
-                        <View onTouchEnd={() => {
-                              setEnteringNumTimes(false);
-                        }} style={{position: 'absolute', elevation: 999, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(100, 100, 100, 0.6)'}}>
-                              <View style={{position: 'absolute', elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
-                                    <TextInput style={{paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
+                        <View style={{position: 'absolute', elevation: 9, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(100, 100, 100, 0.6)'}}>
+                              <View style={{position: 'absolute', borderRadius: 3, elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
+                                    <TextInput style={{paddingLeft: 5, borderRadius: 3, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
                                           onChangeText={(text) => setNumTimes(text)}
                                           placeholder="Enter a number: 1 - 1,000,000"
                                           keyboardType="number-pad"
                                           returnKeyType="done"
                                           />
-                                    <TouchableOpacity style={{justifyContent: 'center', alignItems: 'center', paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, marginTop: 5, backgroundColor: '#777'}}
+                                    <TouchableOpacity style={{justifyContent: 'center', borderRadius: 3, alignItems: 'center', paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, marginTop: 5, backgroundColor: '#777'}}
                                           onPress={() => {
                                                 if (numTimes > 0 && numTimes <= 1000000) {
                                                       alert(randomChoiceX(thisList, numTimes));
