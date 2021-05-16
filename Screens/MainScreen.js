@@ -1,12 +1,11 @@
-import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View } from 'react-native';
+import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View, } from 'react-native';
 import * as React from 'react';
-import {useEffect, useState, Component} from 'react';
-import { useNavigation } from "@react-navigation/native";
+import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import {styles} from '../styles'
 
 export default function MainScreen() {
       const screenSize = Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
-      const navigation = useNavigation();
 
       var [entryNotEntered, setEntryNotEntered] = useState("");
       var [entryMessage, setEntryMessage] = useState("");
@@ -31,8 +30,8 @@ export default function MainScreen() {
 
       const renderList = ({item}) => {
             return (
-                  <View style={{height: 50, paddingTop: 10, justifyContent: 'center', borderBottomWidth: 0.2, borderBottomColor: '#fff',}}>
-                        <Text style={{fontSize: 25, fontWeight: '300', color: '#fff'}}>
+                  <View style={styles.flatlistView}>
+                        <Text style={styles.flatlistText}>
                               {item}
                         </Text>
                   </View>
@@ -55,11 +54,8 @@ export default function MainScreen() {
             }
 
             for (let i = 0; i < list.length; i++) {
-                  // if (list[i] == x) {
-                        modifiedList[i] += (": " + countArray[i]);
-                  // }
+                  modifiedList[i] += (": " + countArray[i]);
             }
-
 
             for (let x = 0; x < winnerArray.length; x++) {
                   for (let i = 0; i < list.length; i++) {
@@ -101,7 +97,7 @@ export default function MainScreen() {
                   countArray[randomNumber] += 1;
                   
             }
-            // alert(countArray);
+
             var most = 0;
             var mostArray = [];
 
@@ -119,7 +115,6 @@ export default function MainScreen() {
             }
 
             displayModifiedList(list, countArray, mostArray);
-            alert(countArray);
             return mostArray;
       }
 
@@ -134,7 +129,7 @@ export default function MainScreen() {
                   countArray[randomNumber] += 1;
                   
             }
-            // alert(countArray);
+
             var most = 0;
             var mostArray = [];
 
@@ -152,25 +147,20 @@ export default function MainScreen() {
             }
 
             displayModifiedList(list, countArray, mostArray);
-            alert(countArray);
             return mostArray;
       }
 
       function saveList (title, list) {
-            // alert(lists.length);
-            // alert(thisList)
-            // lists.push(list);
             var listArray = [];
             listArray.push(lists);
             listArray.push([list]);
             setLists(listArray);
+            
             var titleArray = [];
             titleArray.push(titles);
             titleArray.push(title);
             setTitles(titleArray);
-            // titles.push(title);
-            
-            // alert(lists.length);
+
             storeLists(listArray);
             storeTitles(titleArray);
       }
@@ -180,7 +170,7 @@ export default function MainScreen() {
                   const jsonValue = JSON.stringify(list)
                   await AsyncStorage.setItem('@lists', jsonValue)
             } catch (e) {
-                  alert(e);
+                  console.log(e);
             }
       }
 
@@ -191,7 +181,7 @@ export default function MainScreen() {
                   const jsonValue = JSON.stringify(title)
                   await AsyncStorage.setItem('@titles', jsonValue)
             } catch (e) {
-                  alert(e);
+                  console.log(e);
             }
       }
 
@@ -203,7 +193,7 @@ export default function MainScreen() {
                         const jsonValue = await AsyncStorage.getItem('@titles')
                         return jsonValue != null ? JSON.parse(jsonValue) : null;
                   } catch (e) {
-                        alert(e);
+                        console.log(e);
                   }
             }
 
@@ -212,7 +202,7 @@ export default function MainScreen() {
                         const jsonValue = await AsyncStorage.getItem('@lists')
                         return jsonValue != null ? JSON.parse(jsonValue) : null;
                   } catch (e) {
-                        alert(e);
+                        console.log(e);
                   }
             }
             // alert(lists.length);
@@ -238,27 +228,27 @@ export default function MainScreen() {
       }, [titles.length])
 
       return(
-            <View style={{height: screenSize.height, width: screenSize.width, paddingTop: Platform.OS == "android" ? baseHeightUnit + 10 : baseHeightUnit * 2, backgroundColor: '#222123'}}>
+            <View style={styles.mainView}>
                   <View style={{flexDirection: 'row', justifyContent: 'center'}}>
                         <TextInput 
                               placeholder="Enter text here" 
                               placeholderTextColor="#000"
-                              style={{width: (screenSize.width - 35 - (screenSize.width / 5)), paddingLeft: 3, backgroundColor: '#888', borderRadius: 3, fontSize: 20, fontWeight: '400', color: '#fff'}} 
+                              style={styles.enterTextInput} 
                               onChangeText={(text) => setEntryNotEntered(text)}
                               value={entryNotEntered}
                               />
                         <TouchableOpacity style={{paddingLeft: 5}} onPress={() => {
                               setSaveLoad(true);
                         }}>
-                              <View style={{height: baseHeightUnit, width: ((screenSize.width / 5) + 20), backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Save/Load</Text>
+                              <View style={styles.saveLoadButton}>
+                                    <Text style={styles.buttonText}>Save/Load</Text>
                               </View>
                         </TouchableOpacity>
                   </View>
 
 
 
-                  <View style={{justifyContent: 'center', alignItems: 'center', height: ((baseHeightUnit * 14) - 20), paddingBottom: 5, paddingTop: 10}}>
+                  <View style={styles.flatlistMainView}>
                         {choiceMade ? <FlatList 
                               renderItem={renderList}
                               data={modList}
@@ -275,13 +265,13 @@ export default function MainScreen() {
                         
                   </View>
 
-                  <View style={{paddingVertical: 5, paddingLeft: 10, height: baseHeightUnit, justifyContent: 'center'}}>
-                        <Text style={{fontSize: 18, fontWeight: '400', color: '#fff'}}>
+                  <View style={styles.entryMessageView}>
+                        <Text style={styles.entryMessageText}>
                               {entryMessage}
                         </Text>
                   </View>
 
-                  <View style={{justifyContent: 'center', alignItems: 'center'}}>
+                  <View style={styles.bottomButtonsView}>
                         <TouchableOpacity onPress={() => {
                               
                               if (entryNotEntered.trim().length > 0) {
@@ -293,35 +283,35 @@ export default function MainScreen() {
                               }
                               setChoiceMade(false);
                         }}>
-                              <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Enter</Text>
+                              <View style={styles.enterClearButton}>
+                                    <Text style={styles.buttonText}>Enter</Text>
                               </View>
                         </TouchableOpacity>
 
-                        <View style={{flexDirection: 'row', justifyContent: 'center', paddingVertical: 4}}>
+                        <View style={styles.bottomMiddleRowButtonsView}>
                               <TouchableOpacity onPress={() => {
                                     if (thisList.length > 1) {
-                                          alert(randomChoice1X(thisList));
+                                          randomChoice1X(thisList);
                                     } else {
                                           displayEntryMessage("Enter at least two choices to list");
                                     }
                                     
                               }}>
-                                    <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x1</Text>
+                                    <View style={styles.choiceButtons}>
+                                          <Text style={styles.buttonText}>Choose x1</Text>
                                     </View>
                               </TouchableOpacity>
 
                               <TouchableOpacity style={{paddingHorizontal: 5}} onPress={() => {
                                     if (thisList.length > 1) {
-                                          alert(randomChoice10X(thisList));
+                                          randomChoice10X(thisList);
                                     } else {
                                           displayEntryMessage("Enter at least two choices to list");
                                     }
                                     
                               }}>
-                                    <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 6, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose x10</Text>
+                                    <View style={styles.choiceButtons}>
+                                          <Text style={styles.buttonText}>Choose x10</Text>
                                     </View>
                               </TouchableOpacity>
 
@@ -334,8 +324,8 @@ export default function MainScreen() {
                                     
                                     
                               }}>
-                                    <View style={{height: baseHeightUnit * 1.5, width: (screenSize.width / 3) - 7, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                          <Text style={{fontSize: 20, fontWeight: '400'}}>Choose X</Text>
+                                    <View style={styles.choiceButtons}>
+                                          <Text style={styles.buttonText}>Choose X</Text>
                                     </View>
                               </TouchableOpacity>
                         </View>
@@ -345,20 +335,18 @@ export default function MainScreen() {
                               setModList([]);
                               setChoiceMade(false);
                         }}>
-                              <View style={{height: baseHeightUnit * 1.5, width: screenSize.width - 10, backgroundColor: '#888', justifyContent: 'center', alignItems: 'center', borderRadius: 3}}>
-                                    <Text style={{fontSize: 20, fontWeight: '400'}}>Clear List</Text>
+                              <View style={styles.enterClearButton}>
+                                    <Text style={styles.buttonText}>Clear List</Text>
                               </View>
                         </TouchableOpacity>
                   </View>
 
                   {saveLoad ? (
-                        <View style={{position: 'absolute', elevation: 9, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(100, 100, 100, 0.6)'}}>
-                              <View style={{position: 'absolute', borderRadius: 3, elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
-                                    {/* <View style={{height: 10}} /> */}
-
+                        <View style={styles.saveLoadChooseXBackground}>
+                              <View style={styles.modalView}>
                                     {saving ? 
                                     (
-                                          <TextInput style={{paddingLeft: 5, borderRadius: 3, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
+                                          <TextInput style={styles.saveChooseXInput} 
                                           onChangeText={(text) => setListTitle(text)}
                                           placeholder="Enter title for list"
                                           />
@@ -366,11 +354,10 @@ export default function MainScreen() {
                                     (
                                           <TouchableOpacity onPress={() => {
                                                 setLoading(true);
-                                          }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
-                                                <Text>Load</Text>
+                                          }} style={styles.loadSaveCancelButtons}>
+                                                <Text style={styles.buttonText}>Load</Text>
                                           </TouchableOpacity>
                                     )}
-                                    
 
                                     <View style={{height: 5}} />
                                     
@@ -384,8 +371,8 @@ export default function MainScreen() {
                                           }
                                           
 
-                                    }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
-                                          <Text>Save</Text>
+                                    }} style={styles.loadSaveCancelButtons}>
+                                          <Text style={styles.buttonText}>Save</Text>
                                     </TouchableOpacity>
 
                                     <View style={{height: 5}} />
@@ -398,26 +385,26 @@ export default function MainScreen() {
                                           }
                                           
                                           
-                                    }} style={{alignItems: 'center', borderRadius: 3, justifyContent: 'center', height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}}>
-                                          <Text>Cancel</Text>
+                                    }} style={styles.loadSaveCancelButtons}>
+                                          <Text style={styles.buttonText}>Cancel</Text>
                                     </TouchableOpacity>
                               </View>
                         </View>
                   ) : (<View style={{height: 0, width: 0}}></View>)}
 
                   { enteringNumTimes ? (
-                        <View style={{position: 'absolute', elevation: 9, height: screenSize.height, width: screenSize.width, justifyContent: 'center', alignItems: 'center', backgroundColor: 'rgba(100, 100, 100, 0.6)'}}>
-                              <View style={{position: 'absolute', borderRadius: 3, elevation: 10, paddingVertical: 10, width: screenSize.width / 1.5, backgroundColor: '#fff', alignItems: 'center', alignContent: 'center'}}>
-                                    <TextInput style={{paddingLeft: 5, borderRadius: 3, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, backgroundColor: '#777'}} 
+                        <View style={styles.saveLoadChooseXBackground}>
+                              <View style={styles.modalView}>
+                                    <TextInput style={styles.saveChooseXInput} 
                                           onChangeText={(text) => setNumTimes(text)}
                                           placeholder="Enter a number: 1 - 1,000,000"
                                           keyboardType="number-pad"
                                           returnKeyType="done"
                                           />
-                                    <TouchableOpacity style={{justifyContent: 'center', borderRadius: 3, alignItems: 'center', paddingLeft: 5, height: (screenSize.width / 1.5) / 4 - 10, width: screenSize.width / 1.5 - 20, marginTop: 5, backgroundColor: '#777'}}
+                                    <TouchableOpacity style={styles.chooseXDoneButton}
                                           onPress={() => {
                                                 if (numTimes > 0 && numTimes <= 1000000) {
-                                                      alert(randomChoiceX(thisList, numTimes));
+                                                      randomChoiceX(thisList, numTimes);
                                                 } else {
                                                       if (numTimes != 0) {
                                                             displayEntryMessage("Invalid entry. Enter a number from range 1 - 1,000,000");
@@ -426,14 +413,14 @@ export default function MainScreen() {
                                                 setEnteringNumTimes(false);
                                           }}
                                     >
-                                          <Text>Done</Text>
+                                          <Text style={styles.buttonText}>Done</Text>
                                     </TouchableOpacity>
                               </View>
                         </View>
                   
                   ) : (<View style={{height: 0, width: 0}}></View>)}
 
-                  <View style={{position: 'absolute', bottom: 30, height: 50, width: 320, backgroundColor: '#fff', alignSelf: 'center', marginTop: 10}}>
+                  <View style={styles.bottomAdView}>
 
                   </View>
             </View>
