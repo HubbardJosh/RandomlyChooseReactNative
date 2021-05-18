@@ -1,76 +1,81 @@
-import { StyleSheet, Dimensions } from 'react-native';
+import { StyleSheet, Dimensions, Platform } from 'react-native';
 
 const screenSize = Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
 const baseHeightUnit = screenSize.height / 25;
+const borRad = 4;
+const bgColor = '#71cff4';          // light blue
+const secondaryColor = '#4c4c4c';   // brownish-gray
+const fWeight = '400';
 
 export const styles = StyleSheet.create({
     saveLoadButton: {
         height: baseHeightUnit, 
         width: ((screenSize.width / 5) + 20), 
-        backgroundColor: '#4c4c4c', 
+        backgroundColor: secondaryColor, 
         justifyContent: 'center', 
         alignItems: 'center', 
-        borderRadius: 3
+        borderRadius: borRad
     },
     buttonText: {
-        fontSize: 20, 
-        fontWeight: '400',
+        fontSize: Platform.OS == 'ios' ? 20 : 16, 
+        fontWeight: fWeight,
         color: '#fff'
     },
     enterClearButton: {
         height: baseHeightUnit * 1.5, 
         width: screenSize.width - 10, 
-        backgroundColor: '#4c4c4c', 
+        backgroundColor: secondaryColor, 
         justifyContent: 'center', 
         alignItems: 'center', 
-        borderRadius: 3
+        borderRadius: borRad
     },
     choiceButtons: {
         height: baseHeightUnit * 1.5, 
         width: (screenSize.width / 3) - 7, 
-        backgroundColor: '#4c4c4c', 
+        backgroundColor: secondaryColor, 
         justifyContent: 'center', 
         alignItems: 'center', 
-        borderRadius: 3
+        borderRadius: borRad
     },
     enterTextInput: {
         width: (screenSize.width - 35 - (screenSize.width / 5)), 
         paddingLeft: 3, 
-        backgroundColor: '#4c4c4c', 
-        borderRadius: 3, 
-        fontSize: 20, 
-        fontWeight: '400', 
+        backgroundColor: secondaryColor, 
+        borderRadius: borRad, 
+        fontSize: Platform.OS == 'ios' ? 20 : 16, 
+        fontWeight: fWeight, 
         color: '#fff',
     },
     loadSaveCancelButtons: {
         alignItems: 'center', 
-        borderRadius: 3, 
+        borderRadius: borRad, 
         justifyContent: 'center', 
-        height: (screenSize.width / 1.5) / 4 - 10, 
+        height: baseHeightUnit * 1.5, 
         width: screenSize.width / 1.5 - 20, 
-        backgroundColor: '#4c4c4c'
+        backgroundColor: secondaryColor
     },
     chooseXDoneButton: {
         justifyContent: 'center', 
-        borderRadius: 3, 
+        borderRadius: borRad, 
         alignItems: 'center', 
         paddingLeft: 5, 
-        height: (screenSize.width / 1.5) / 4 - 10, 
+        height: baseHeightUnit * 1.5, 
         width: screenSize.width / 1.5 - 20, 
         marginTop: 5, 
-        backgroundColor: '#4c4c4c'
+        backgroundColor: secondaryColor
     },
     saveChooseXInput: {
         paddingLeft: 5, 
-        borderRadius: 3, 
-        height: (screenSize.width / 1.5) / 4 - 10, 
+        borderRadius: borRad, 
+        height: baseHeightUnit * 1.5, 
         width: screenSize.width / 1.5 - 20, 
-        backgroundColor: '#4c4c4c',
-        color: '#fff'
+        backgroundColor: secondaryColor,
+        color: '#fff',
+        fontSize: Platform.OS == 'ios' ? 20 : 16
     },
     entryMessageText: {
         fontSize: 18,
-        fontWeight: '400', 
+        fontWeight: fWeight, 
         color: '#000'
     },
     entryMessageView: {
@@ -83,24 +88,27 @@ export const styles = StyleSheet.create({
         position: 'absolute', 
         elevation: 9, 
         height: screenSize.height, 
-        width: screenSize.width, 
+        width: screenSize.width + 100,
+        left: -50, 
         justifyContent: 'center', 
         alignItems: 'center', 
         backgroundColor: 'rgba(50, 50, 50, 0.5)'
     },
     modalView: {
         position: 'absolute', 
-        borderRadius: 3, 
+        borderRadius: borRad, 
         elevation: 10, 
         paddingVertical: 10, 
         width: screenSize.width / 1.5, 
-        backgroundColor: '#fff', 
+        backgroundColor: bgColor, 
+        borderColor: secondaryColor,
+        borderWidth: 1,
         alignItems: 'center', 
         alignContent: 'center'
     },
     flatlistText: {
         fontSize: 22, 
-        fontWeight: '300', 
+        fontWeight: fWeight, 
         color: '#000'
     },
     flatlistView: {
@@ -113,19 +121,24 @@ export const styles = StyleSheet.create({
     flatlistMainView: {
         justifyContent: 'center', 
         alignItems: 'center', 
-        height: ((baseHeightUnit * 14) - 20), 
+        maxHeight: Platform.OS == 'ios' ? ((baseHeightUnit * 14.5) - 10) : ((baseHeightUnit * 14) - 20), 
+        // height: Platform.OS == 'ios' ? ((baseHeightUnit * 16.25) - 10) : ((baseHeightUnit * 14) - 20), 
         paddingBottom: 5, 
         paddingTop: 10
     },
     mainView: {
         height: screenSize.height, 
         width: screenSize.width, 
-        paddingTop: Platform.OS == "android" ? baseHeightUnit + 10 : baseHeightUnit * 2, 
-        backgroundColor: '#71cff4'
+        paddingTop: Platform.OS == "android" ? baseHeightUnit : 0, 
+        backgroundColor: bgColor
     },
     bottomButtonsView: {
         justifyContent: 'center', 
-        alignItems: 'center'
+        alignItems: 'center',
+        position: 'absolute',
+        bottom: Platform.OS == 'ios' ? 70 : 70,
+        marginBottom: Platform.OS == 'ios' ? 10 : 0,
+        left: 5,
     },
     bottomMiddleRowButtonsView: {
         flexDirection: 'row', 
@@ -134,12 +147,12 @@ export const styles = StyleSheet.create({
     },
     bottomAdView: {
         position: 'absolute', 
-        bottom: 30, 
+        bottom: Platform.OS == 'ios' ? 20 : 5, 
         height: 50, 
         width: 320, 
         backgroundColor: '#fff', 
         alignSelf: 'center', 
-        marginTop: 10
+        marginTop: 10,
     }
 
 });

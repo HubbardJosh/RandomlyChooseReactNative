@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View, } from 'react-native';
+import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, } from 'react-native';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -9,7 +9,6 @@ export default function MainScreen() {
 
       var [entryNotEntered, setEntryNotEntered] = useState("");
       var [entryMessage, setEntryMessage] = useState("");
-      const baseHeightUnit = screenSize.height / 25;
 
       const [lists, setLists] = useState([]);
       const [titles, setTitles] = useState([]);
@@ -228,8 +227,8 @@ export default function MainScreen() {
       }, [titles.length])
 
       return(
-            <View style={styles.mainView}>
-                  <View style={{flexDirection: 'row', justifyContent: 'center'}}>
+            <SafeAreaView style={[styles.mainView, {flex: 1}]}>
+                  <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 5}}>
                         <TextInput 
                               placeholder="Enter text here" 
                               placeholderTextColor="#bbb"
@@ -245,8 +244,6 @@ export default function MainScreen() {
                               </View>
                         </TouchableOpacity>
                   </View>
-
-
 
                   <View style={styles.flatlistMainView}>
                         {choiceMade ? <FlatList 
@@ -265,13 +262,14 @@ export default function MainScreen() {
                         
                   </View>
 
-                  <View style={styles.entryMessageView}>
-                        <Text style={styles.entryMessageText}>
-                              {entryMessage}
-                        </Text>
-                  </View>
-
                   <View style={styles.bottomButtonsView}>
+
+                        <View style={[styles.entryMessageView, {alignSelf: 'flex-start', left: -10}]}>
+                              <Text style={styles.entryMessageText}>
+                                    {entryMessage}
+                              </Text>
+                        </View>
+
                         <TouchableOpacity onPress={() => {
                               
                               if (entryNotEntered.trim().length > 0) {
@@ -414,7 +412,7 @@ export default function MainScreen() {
                                                             displayEntryMessage("No entry. Enter a number: 1 - 1,000,000")
                                                       }
                                                 }
-                                                setChoiceMade(false);
+                                                setChoiceMade(true);
                                                 setEnteringNumTimes(false);
                                                 setNumTimes(0);
                                           }}
@@ -425,10 +423,10 @@ export default function MainScreen() {
                         </View>
                   
                   ) : (<View style={{height: 0, width: 0}}></View>)}
+                        
+                        <View style={styles.bottomAdView}>
 
-                  <View style={styles.bottomAdView}>
-
-                  </View>
-            </View>
+                        </View>
+            </SafeAreaView>
       );
 }
