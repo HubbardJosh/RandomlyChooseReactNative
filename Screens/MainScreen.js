@@ -7,8 +7,8 @@ import {styles} from '../styles'
 export default function MainScreen() {
       const screenSize = Platform.OS === "web" ? Dimensions.get("window") : Dimensions.get("screen");
 
-      var [entryNotEntered, setEntryNotEntered] = useState("");
-      var [entryMessage, setEntryMessage] = useState("");
+      const [entryNotEntered, setEntryNotEntered] = useState("");
+      const [entryMessage, setEntryMessage] = useState("");
 
       const [lists, setLists] = useState([]);
       const [titles, setTitles] = useState([]);
@@ -26,16 +26,6 @@ export default function MainScreen() {
       const [numTimes, setNumTimes] = useState(0);
 
       const [choiceMade, setChoiceMade] = useState(false);
-
-      const renderList = ({item}) => {
-            return (
-                  <View style={styles.flatlistView}>
-                        <Text style={styles.flatlistText}>
-                              {item}
-                        </Text>
-                  </View>
-            );
-      }
 
       function displayEntryMessage (message) {
             setEntryMessage(message);
@@ -57,11 +47,7 @@ export default function MainScreen() {
             }
 
             for (let x = 0; x < winnerArray.length; x++) {
-                  for (let i = 0; i < list.length; i++) {
-                        if (list[i] == winnerArray[x]) {
-                              modifiedList[i] += " ☆";
-                        }
-                  }
+                  modifiedList[winnerArray[x]] += " ☆";
             }
 
             setChoiceMade(true);
@@ -103,11 +89,11 @@ export default function MainScreen() {
             for (let i = 0; i < countArray.length; i++) {
                   
                   if (countArray[i] >= most) {
-                        mostArray.push(list[i]);
+                        mostArray.push(i);
                         if (countArray[i] > most) {
                               mostArray = [];
                               most = countArray[i];
-                              mostArray.push(list[i]);
+                              mostArray.push(i);
                         }
                         
                   }
@@ -135,11 +121,11 @@ export default function MainScreen() {
             for (let i = 0; i < countArray.length; i++) {
                   
                   if (countArray[i] >= most) {
-                        mostArray.push(list[i]);
+                        mostArray.push(i);
                         if (countArray[i] > most) {
                               mostArray = [];
                               most = countArray[i];
-                              mostArray.push(list[i]);
+                              mostArray.push(i);
                         }
                         
                   }
@@ -150,6 +136,22 @@ export default function MainScreen() {
       }
 
       function saveList (title, list) {
+
+            if (titles.length == 0) {
+                  // alert(title)
+                  setTitles(title);
+                  setLists(list);
+            } else {
+                  // alert(titles)
+                  // titles.forEach((x) => {
+                  //       alert(x)
+                  // })
+            }
+
+            
+            // alert(titles)
+            // alert(lists)
+
             var listArray = [];
             listArray.push(lists);
             listArray.push([list]);
@@ -160,6 +162,8 @@ export default function MainScreen() {
             titleArray.push(title);
             setTitles(titleArray);
 
+            
+
             storeLists(listArray);
             storeTitles(titleArray);
       }
@@ -167,48 +171,52 @@ export default function MainScreen() {
       const storeLists = async (list) => {
             try {
                   const jsonValue = JSON.stringify(list)
-                  await AsyncStorage.setItem('@lists', jsonValue)
+                  await AsyncStorage.setItem('lists', jsonValue)
             } catch (e) {
                   console.log(e);
             }
       }
-
-
 
       const storeTitles = async (title) => {
             try {
                   const jsonValue = JSON.stringify(title)
-                  await AsyncStorage.setItem('@titles', jsonValue)
+                  await AsyncStorage.setItem('titles', jsonValue)
             } catch (e) {
                   console.log(e);
             }
       }
 
-      
+      const getTitles = async () => {
+            try {
+                  const jsonValue = await AsyncStorage.getItem('titles')
+                  return JSON.parse(jsonValue);
+            } catch (e) {
+                  console.log(e);
+            }
+      }
+
+      const getLists = async () => {
+            try {
+                  const jsonValue = await AsyncStorage.getItem('lists')
+                  return JSON.parse(jsonValue);
+            } catch (e) {
+                  console.log(e);
+            }
+      }
 
       useEffect (() => {
-            const getTitles = async () => {
-                  try {
-                        const jsonValue = await AsyncStorage.getItem('@titles')
-                        return jsonValue != null ? JSON.parse(jsonValue) : null;
-                  } catch (e) {
-                        console.log(e);
-                  }
-            }
 
-            const getLists = async () => {
-                  try {
-                        const jsonValue = await AsyncStorage.getItem('@lists')
-                        return jsonValue != null ? JSON.parse(jsonValue) : null;
-                  } catch (e) {
-                        console.log(e);
-                  }
-            }
+
+            // alert(getTitles);
+            // getTitles.
+            // alert(titles.length);
             // alert(lists.length);
-            // if (getLists != undefined && getTitles != undefined) {
-                  setLists(getLists);
-                  setTitles(getTitles);
-            // }
+            if (getLists.length != 0 && getTitles.length != 0 && titles.length == 0 && lists.length == 0) {
+                  setLists(getLists());
+                  setTitles(getTitles());
+            }
+            alert(titles);
+            alert(lists)
             // alert(lists.length);
             // if (lists.length > 0) {
             //       // titles.forEach((x) => {
@@ -224,7 +232,19 @@ export default function MainScreen() {
             //       })
             // }
             
-      }, [titles.length])
+
+            
+      }, [titles.length, lists.length]);
+
+      const renderList = ({item}) => {
+            return (
+                  <View style={styles.flatlistView}>
+                        <Text style={styles.flatlistText}>
+                              {item}
+                        </Text>
+                  </View>
+            );
+      }
 
       return(
             <SafeAreaView style={[styles.mainView, {flex: 1}]}>
@@ -246,7 +266,14 @@ export default function MainScreen() {
                   </View>
 
                   <View style={styles.flatlistMainView}>
-                        {choiceMade ? <FlatList 
+                        {loading ? <FlatList 
+                              renderItem={renderList}
+                              data={titles}
+                              keyExtractor={(x, i) => (x + i)}
+                              style={{width: screenSize.width - 10}}
+                        />  
+                        :
+                        choiceMade ? <FlatList 
                               renderItem={renderList}
                               data={modList}
                               keyExtractor={(x, i) => (x + i)}
@@ -320,7 +347,6 @@ export default function MainScreen() {
                                           displayEntryMessage("Enter at least two choices to list");
                                     }
                                     
-                                    
                               }}>
                                     <View style={styles.choiceButtons}>
                                           <Text style={styles.buttonText}>Choose X</Text>
@@ -331,6 +357,7 @@ export default function MainScreen() {
                         <TouchableOpacity onPress={() => {
                               setThisList([]);
                               setModList([]);
+                              setLoading(false);
                               setChoiceMade(false);
                         }}>
                               <View style={styles.enterClearButton}>
@@ -352,7 +379,11 @@ export default function MainScreen() {
                                     ) : 
                                     (
                                           <TouchableOpacity onPress={() => {
-                                                setLoading(true);
+                                                if (titles.length > 0 && lists.length == titles.length) {
+                                                      setLoading(true);
+                                                } else {
+                                                      setLoading(false);
+                                                }
                                           }} style={styles.loadSaveCancelButtons}>
                                                 <Text style={styles.buttonText}>Load</Text>
                                           </TouchableOpacity>
