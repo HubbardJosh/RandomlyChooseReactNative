@@ -113,18 +113,16 @@ export const styles = StyleSheet.create({
     },
     flatlistView: {
         height: 50, 
-        paddingTop: 10, 
         justifyContent: 'center', 
         borderBottomWidth: 0.3, 
-        borderBottomColor: '#777'
+        borderBottomColor: '#777',
     },
     flatlistMainView: {
         justifyContent: 'center', 
         alignItems: 'center', 
-        maxHeight: Platform.OS == 'ios' ? ((baseHeightUnit * 14.5) - 10) : ((baseHeightUnit * 14) - 20), 
-        // height: Platform.OS == 'ios' ? ((baseHeightUnit * 16.25) - 10) : ((baseHeightUnit * 14) - 20), 
-        paddingBottom: 5, 
-        paddingTop: 10
+        top: 5,
+        height: screenSize.height - 360,
+        paddingBottom: Platform.OS == 'android' ? 10 : 0, 
     },
     mainView: {
         height: screenSize.height, 
@@ -136,8 +134,7 @@ export const styles = StyleSheet.create({
         justifyContent: 'center', 
         alignItems: 'center',
         position: 'absolute',
-        bottom: Platform.OS == 'ios' ? 70 : 70,
-        marginBottom: Platform.OS == 'ios' ? 10 : 0,
+        bottom: Platform.OS == 'ios' ? 85 : 65,
         left: 5,
     },
     bottomMiddleRowButtonsView: {
@@ -147,7 +144,7 @@ export const styles = StyleSheet.create({
     },
     bottomAdView: {
         position: 'absolute', 
-        bottom: Platform.OS == 'ios' ? 20 : 5, 
+        bottom: Platform.OS == 'ios' ? 25 : 5, 
         height: 50, 
         width: 320, 
         backgroundColor: '#fff', 

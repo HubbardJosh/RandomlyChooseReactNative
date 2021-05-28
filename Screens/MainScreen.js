@@ -11,7 +11,7 @@ export default function MainScreen() {
       const [entryMessage, setEntryMessage] = useState("");
 
       const [lists, setLists] = useState([]);
-      const [titles, setTitles] = useState([]);
+      const [titles, setTitles] = useState("");
 
       const [listTitle, setListTitle] = useState("");
       const [thisList, setThisList] = useState([]);
@@ -136,42 +136,26 @@ export default function MainScreen() {
       }
 
       function saveList (title, list) {
-
-            if (titles.length == 0) {
-                  // alert(title)
-                  setTitles(title);
-                  setLists(list);
-            } else {
-                  // alert(titles)
-                  // titles.forEach((x) => {
-                  //       alert(x)
-                  // })
+            var setTitle = title;
+            if (titles.length > 0) {
+                  if (titles.split(',').includes(setTitle)) {
+                        setTitle = setTitle + titles.length;
+                  }
             }
 
-            
-            // alert(titles)
-            // alert(lists)
+            if (thisList.length > 1) {
+                  setTitles(titles.concat());
+                  setLists(lists.concat(list));
 
-            var listArray = [];
-            listArray.push(lists);
-            listArray.push([list]);
-            setLists(listArray);
-            
-            var titleArray = [];
-            titleArray.push(titles);
-            titleArray.push(title);
-            setTitles(titleArray);
-
-            
-
-            storeLists(listArray);
-            storeTitles(titleArray);
+                  storeList(list, setTitle);
+                  storeTitles(titles.concat(setTitle + ','));
+            }
       }
 
-      const storeLists = async (list) => {
+      const storeList = async (list, title) => {
             try {
                   const jsonValue = JSON.stringify(list)
-                  await AsyncStorage.setItem('lists', jsonValue)
+                  await AsyncStorage.setItem(title, jsonValue)
             } catch (e) {
                   console.log(e);
             }
@@ -189,66 +173,80 @@ export default function MainScreen() {
       const getTitles = async () => {
             try {
                   const jsonValue = await AsyncStorage.getItem('titles')
-                  return JSON.parse(jsonValue);
+                  if (jsonValue != null) {
+                        setTitles(JSON.parse(jsonValue));
+                  }
+
+                  return jsonValue != null ? JSON.parse(jsonValue) : null;
             } catch (e) {
                   console.log(e);
             }
       }
 
-      const getLists = async () => {
+      const clearTitles = async () => {
             try {
-                  const jsonValue = await AsyncStorage.getItem('lists')
-                  return JSON.parse(jsonValue);
+                  return await AsyncStorage.clear();
+            } catch (e) {
+                  console.log(e);
+            }
+      }
+      const clearList = async (title) => {
+            try {
+                  return await AsyncStorage.removeItem(title);
+            } catch (e) {
+                  console.log(e);
+            }
+      }
+
+      const getList = async (title) => {
+            try {
+                  const jsonValue = await AsyncStorage.getItem(title)
+
+                  if (jsonValue != null) {
+                        setThisList(JSON.parse(jsonValue));
+                  }
+                  
+                  return jsonValue != null ? JSON.parse(jsonValue) : null;
             } catch (e) {
                   console.log(e);
             }
       }
 
       useEffect (() => {
+            getTitles();
 
-
-            // alert(getTitles);
-            // getTitles.
-            // alert(titles.length);
-            // alert(lists.length);
-            if (getLists.length != 0 && getTitles.length != 0 && titles.length == 0 && lists.length == 0) {
-                  setLists(getLists());
-                  setTitles(getTitles());
-            }
-            alert(titles);
-            alert(lists)
-            // alert(lists.length);
-            // if (lists.length > 0) {
-            //       // titles.forEach((x) => {
-            //       //       alert(x);
-            //       // })
-            //       // alert(lists);
-            //       // alert(titles);
-            //       // alert(lists.length);
-            //       var count = 0;
-            //       lists.forEach((x) => {
-            //             alert(count + "  " + x);
-            //             count += 1;
+      // used to delete saved titles and lists 
+            // if (titles.length > 0) {
+            //       titles.split(',').forEach((x) => {
+            //             clearList(x);
             //       })
+            //       clearTitles();
             // }
-            
-
-            
       }, [titles.length, lists.length]);
 
       const renderList = ({item}) => {
             return (
-                  <View style={styles.flatlistView}>
-                        <Text style={styles.flatlistText}>
-                              {item}
-                        </Text>
-                  </View>
+                  <TouchableOpacity disabled={loading ? false : true} 
+                  onPress={() => {
+                        if (loading) {
+                              getList(item);
+                              setLoading(false);
+                              setChoiceMade(false);
+                        }
+
+                  }}>
+                        <View style={styles.flatlistView}>
+                              <Text style={styles.flatlistText}>
+                                    {item}
+                              </Text>
+                        </View>
+                  </TouchableOpacity>
             );
       }
 
       return(
             <SafeAreaView style={[styles.mainView, {flex: 1}]}>
-                  <View style={{flexDirection: 'row', justifyContent: 'center', paddingTop: 5}}>
+                  <View style={{flexDirection: 'row', justifyContent: 'center', top: 5, marginBottom: 10}}>
                         <TextInput 
                               placeholder="Enter text here" 
                               placeholderTextColor="#bbb"
@@ -268,7 +266,7 @@ export default function MainScreen() {
                   <View style={styles.flatlistMainView}>
                         {loading ? <FlatList 
                               renderItem={renderList}
-                              data={titles}
+                              data={titles.split(',').slice(0, titles.split(',').length - 1)}
                               keyExtractor={(x, i) => (x + i)}
                               style={{width: screenSize.width - 10}}
                         />  
@@ -300,7 +298,7 @@ export default function MainScreen() {
                         <TouchableOpacity onPress={() => {
                               
                               if (entryNotEntered.trim().length > 0) {
-                                    thisList.push(entryNotEntered);
+                                    thisList.push(entryNotEntered.trim());
                                     setEntryNotEntered("");
                                     setEntryMessage("");
                               } else {
@@ -355,14 +353,27 @@ export default function MainScreen() {
                         </View>
 
                         <TouchableOpacity onPress={() => {
-                              setThisList([]);
-                              setModList([]);
-                              setLoading(false);
-                              setChoiceMade(false);
+                              if (loading) {
+                                    setLoading(false);
+                              } else {
+                                    setThisList([]);
+                                    setModList([]);
+                                    setChoiceMade(false);
+                              }
+
                         }}>
-                              <View style={styles.enterClearButton}>
-                                    <Text style={styles.buttonText}>Clear List</Text>
-                              </View>
+                              
+                                    {loading ?
+                                    <View style={styles.enterClearButton}>
+                                          <Text style={styles.buttonText}>Cancel</Text>
+                                    </View>
+                                    :
+                                    <View style={styles.enterClearButton}>
+                                          <Text style={styles.buttonText}>Clear List</Text>
+                                    </View>
+                              }
+                                    
+                              
                         </TouchableOpacity>
                   </View>
 
@@ -379,10 +390,13 @@ export default function MainScreen() {
                                     ) : 
                                     (
                                           <TouchableOpacity onPress={() => {
-                                                if (titles.length > 0 && lists.length == titles.length) {
+                                                if (titles.length > 0) {
                                                       setLoading(true);
+                                                      setSaveLoad(false);
                                                 } else {
                                                       setLoading(false);
+                                                      setSaveLoad(false);
+                                                      displayEntryMessage("No lists to load")
                                                 }
                                           }} style={styles.loadSaveCancelButtons}>
                                                 <Text style={styles.buttonText}>Load</Text>
@@ -392,6 +406,9 @@ export default function MainScreen() {
                                     <View style={{height: 5}} />
                                     
                                     <TouchableOpacity onPress={() => {
+                                          if (listTitle == "") {
+                                                setListTitle("No Title " + titles.length)
+                                          }
                                           if (saving) {
                                                 saveList(listTitle, thisList);
                                                 setSaving(false);
@@ -436,6 +453,7 @@ export default function MainScreen() {
                                           onPress={() => {
                                                 if (numTimes > 0 && numTimes <= 1000000) {
                                                       randomChoiceX(thisList, numTimes);
+                                                      setChoiceMade(true);
                                                 } else {
                                                       if (numTimes != 0) {
                                                             displayEntryMessage("Invalid entry. Enter a number: 1 - 1,000,000");
@@ -443,7 +461,7 @@ export default function MainScreen() {
                                                             displayEntryMessage("No entry. Enter a number: 1 - 1,000,000")
                                                       }
                                                 }
-                                                setChoiceMade(true);
+                                                
                                                 setEnteringNumTimes(false);
                                                 setNumTimes(0);
                                           }}
