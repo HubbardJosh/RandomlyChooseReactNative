@@ -109,13 +109,16 @@ export const styles = StyleSheet.create({
     flatlistText: {
         fontSize: 22, 
         fontWeight: fWeight, 
-        color: '#000'
+        color: '#000',
+        
     },
     flatlistView: {
         height: 50, 
-        justifyContent: 'center', 
+        justifyContent: 'flex-start', 
         borderBottomWidth: 0.3, 
         borderBottomColor: '#777',
+        flexDirection: 'row',
+        alignItems: 'center'
     },
     flatlistMainView: {
         justifyContent: 'center', 

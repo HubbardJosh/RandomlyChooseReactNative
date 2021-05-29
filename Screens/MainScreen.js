@@ -1,4 +1,4 @@
-import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, } from 'react-native';
+import { Dimensions, FlatList, Platform, Text, TextInput, TouchableOpacity, View, SafeAreaView, KeyboardAvoidingView, Image, Alert } from 'react-native';
 import * as React from 'react';
 import {useEffect, useState} from 'react';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -17,10 +17,14 @@ export default function MainScreen() {
       const [thisList, setThisList] = useState([]);
 
       const [modList, setModList] = useState([]);
-
+      
       const [saveLoad, setSaveLoad] = useState(false);
       const [loading, setLoading] = useState(false);
       const [saving, setSaving] = useState(false);
+
+      const [loaded, setLoaded] = useState(false);
+
+      const [refresh, setRefresh] = useState(false);
 
       const [enteringNumTimes, setEnteringNumTimes] = useState(false);
       const [numTimes, setNumTimes] = useState(0);
@@ -137,18 +141,48 @@ export default function MainScreen() {
 
       function saveList (title, list) {
             var setTitle = title;
-            if (titles.length > 0) {
-                  if (titles.split(',').includes(setTitle)) {
-                        setTitle = setTitle + titles.length;
-                  }
-            }
 
             if (thisList.length > 1) {
-                  setTitles(titles.concat());
-                  setLists(lists.concat(list));
+                  if (titles.split(',').includes(setTitle)) {
+                        Alert.alert("List already exists with entered title.", "Do you wish to override?", [
+                              {
+                                    text: "Yes",
+                                    onPress: () => {
+                                          clearList(setTitle);
+                                          // storeTitles(titles);
 
-                  storeList(list, setTitle);
-                  storeTitles(titles.concat(setTitle + ','));
+                                          setLists(lists.concat(list));
+                                          storeList(list, setTitle);
+                                    }
+                              }, {
+                                    text: "No",
+                                    onPress: () => {
+                                          var xTitle = setTitle + titles.split(',').length;
+                                          setTitles(titles.concat(xTitle + ','));
+                                          storeTitles(titles.concat(xTitle + ','));
+
+                                          setLists(lists.concat(list));
+                                          storeList(list, xTitle);
+                                    },
+                                    
+                              }, {
+                                    text: "Cancel",
+
+                              }
+                        ]
+                        );
+                        
+                  } else {
+                        setTitles(titles.concat(setTitle + ','));
+                        storeTitles(titles.concat(setTitle + ','));
+
+                        setLists(lists.concat(list));
+                        storeList(list, setTitle);
+                  }
+                  
+                  
+
+                  
             }
       }
 
@@ -215,6 +249,7 @@ export default function MainScreen() {
       useEffect (() => {
             getTitles();
 
+
       // used to delete saved titles and lists 
             // if (titles.length > 0) {
             //       titles.split(',').forEach((x) => {
@@ -222,9 +257,30 @@ export default function MainScreen() {
             //       })
             //       clearTitles();
             // }
-      }, [titles.length, lists.length]);
+      }, []);
 
-      const renderList = ({item}) => {
+      useEffect (() => {
+            setRefresh(false);
+      }, [refresh]);
+
+      useEffect (() => {
+            setSaveLoad(false);
+            setLoading(false);
+            setSaving(false);
+            setLoaded(false);
+            setRefresh(false);
+            setEnteringNumTimes(false);
+            setChoiceMade(false);
+            // console.log(titles.substring(0, 1))
+            if (titles.substring(0, 1).trim() == ',') {
+                  // console.log('true')
+                  setTitles(titles.slice(1, titles.length - 1));
+                  storeTitles(titles.slice(1, titles.length - 1));
+            }
+            console.log(titles);
+      }, []);
+
+      const renderList = ({item, index}) => {
             return (
                   <TouchableOpacity disabled={loading ? false : true} 
                   onPress={() => {
@@ -232,6 +288,7 @@ export default function MainScreen() {
                               getList(item);
                               setLoading(false);
                               setChoiceMade(false);
+                              setLoaded(true);
                         }
 
                   }}>
@@ -239,6 +296,40 @@ export default function MainScreen() {
                               <Text style={styles.flatlistText}>
                                     {item}
                               </Text>
+                              <TouchableOpacity style={{right: 20, position: 'absolute'}} 
+                                    onPress={() => {
+                                          if (!loading) {
+                                                thisList.splice(index, 1);
+                                                setRefresh(true);
+                                          } else {
+                                                console.log(titles)
+                                                Alert.alert("Do you want to delete list: ", String(item), [
+                                                      {
+                                                            text: "Yes",
+                                                            onPress: () => {
+                                                                  clearList(item);
+                                                                  var temp = titles.split(',').sort();
+                                                                  console.log("before" + temp)
+                                                                  temp.splice(index, 1);
+                                                                  
+                                                                  setTitles(temp.join(','));
+                                                                  console.log("after " + temp)
+                                                                  storeTitles(temp.join(','));
+                                                            }
+                                                      }, {
+                                                            text: "No",
+                                                      },
+                                                ]
+                                                );
+                                          }
+                                          
+                                    }}>
+                                    <Image style={{height: 30, width: 20,}}
+                                          source={require('../assets/tcc.png')}
+                                          
+                                    />
+                              </TouchableOpacity>
+                              
                         </View>
                   </TouchableOpacity>
             );
@@ -266,7 +357,7 @@ export default function MainScreen() {
                   <View style={styles.flatlistMainView}>
                         {loading ? <FlatList 
                               renderItem={renderList}
-                              data={titles.split(',').slice(0, titles.split(',').length - 1)}
+                              data={titles.split(',').slice(0, titles.split(',').length - 1).sort()}
                               keyExtractor={(x, i) => (x + i)}
                               style={{width: screenSize.width - 10}}
                         />  
@@ -283,6 +374,7 @@ export default function MainScreen() {
                               data={thisList}
                               keyExtractor={(x, i) => (x + i)}
                               style={{width: screenSize.width - 10}}
+                              extraData={refresh}
                         />}
                         
                   </View>
@@ -355,11 +447,13 @@ export default function MainScreen() {
                         <TouchableOpacity onPress={() => {
                               if (loading) {
                                     setLoading(false);
+                                    
                               } else {
                                     setThisList([]);
                                     setModList([]);
                                     setChoiceMade(false);
                               }
+                              setLoaded(false);
 
                         }}>
                               
@@ -406,16 +500,23 @@ export default function MainScreen() {
                                     <View style={{height: 5}} />
                                     
                                     <TouchableOpacity onPress={() => {
-                                          if (listTitle == "") {
-                                                setListTitle("No Title " + titles.length)
-                                          }
-                                          if (saving) {
-                                                saveList(listTitle, thisList);
+                                          if (thisList.length > 1) {
+                                                if (listTitle == "") {
+                                                      setListTitle("No Title " + titles.length)
+                                                }
+                                                if (saving) {
+                                                      saveList(listTitle, thisList);
+                                                      setSaving(false);
+                                                      setSaveLoad(false);
+                                                } else {
+                                                      setSaving(true);
+                                                }
+                                          } else {
                                                 setSaving(false);
                                                 setSaveLoad(false);
-                                          } else {
-                                                setSaving(true);
+                                                displayEntryMessage("List must have at least two items.")
                                           }
+                                          
                                           
 
                                     }} style={styles.loadSaveCancelButtons}>
@@ -431,7 +532,7 @@ export default function MainScreen() {
                                                 setSaveLoad(false);
                                           }
                                           
-                                          
+                                          setLoaded(false);
                                     }} style={styles.loadSaveCancelButtons}>
                                           <Text style={styles.buttonText}>Cancel</Text>
                                     </TouchableOpacity>
