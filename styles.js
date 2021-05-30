@@ -27,7 +27,8 @@ export const styles = StyleSheet.create({
         backgroundColor: secondaryColor, 
         justifyContent: 'center', 
         alignItems: 'center', 
-        borderRadius: borRad
+        borderRadius: borRad,
+        left: 5,
     },
     choiceButtons: {
         height: baseHeightUnit * 1.5, 
@@ -147,7 +148,7 @@ export const styles = StyleSheet.create({
     },
     bottomAdView: {
         position: 'absolute', 
-        bottom: Platform.OS == 'ios' ? 25 : 5, 
+        bottom: Platform.OS == 'ios' ? 25 : 0, 
         height: 50, 
         width: 320, 
         backgroundColor: '#fff', 

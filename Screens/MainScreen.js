@@ -371,6 +371,7 @@ export default function MainScreen() {
 
       return(
             <SafeAreaView style={[styles.mainView, {flex: 1}]}>
+                  <KeyboardAvoidingView behavior={'position'} enabled={false}>
                   <View style={{flexDirection: 'row', justifyContent: 'center', top: 5, marginBottom: 10}}>
                         <TextInput 
                               placeholder="Enter text here" 
@@ -417,7 +418,7 @@ export default function MainScreen() {
                         
                   </View>
 
-                  <View style={styles.bottomButtonsView}>
+                  
 
                         <View style={[styles.entryMessageView, {alignSelf: 'flex-start', left: -10}]}>
                               <Text style={styles.entryMessageText}>
@@ -507,7 +508,8 @@ export default function MainScreen() {
                                     
                               
                         </TouchableOpacity>
-                  </View>
+                        <View style={{height: 5}} />
+                  </KeyboardAvoidingView>
 
                   {saveLoad ? (
                         <View style={styles.saveLoadChooseXBackground}>
@@ -612,10 +614,10 @@ export default function MainScreen() {
                         </View>
                   
                   ) : (<View style={{height: 0, width: 0}}></View>)}
-                        
-                        <View style={styles.bottomAdView}>
+                  
+                  <KeyboardAvoidingView behavior={'height'} enabled={true} style={[styles.bottomAdView]}>
 
-                        </View>
+                  </KeyboardAvoidingView>
             </SafeAreaView>
       );
 }
