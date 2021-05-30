@@ -148,6 +148,7 @@ export default function MainScreen() {
                               {
                                     text: "Yes",
                                     onPress: () => {
+                                          console.log('override list')
                                           clearList(setTitle);
                                           // storeTitles(titles);
 
@@ -157,9 +158,10 @@ export default function MainScreen() {
                               }, {
                                     text: "No",
                                     onPress: () => {
+                                          console.log('not overriding')
                                           var xTitle = setTitle + titles.split(',').length;
-                                          setTitles(titles.concat(xTitle + ','));
-                                          storeTitles(titles.concat(xTitle + ','));
+                                          setTitles(titles.concat(',' + xTitle));
+                                          storeTitles(titles.concat(',' + xTitle));
 
                                           setLists(lists.concat(list));
                                           storeList(list, xTitle);
@@ -167,17 +169,31 @@ export default function MainScreen() {
                                     
                               }, {
                                     text: "Cancel",
+                                    onPress: () => {
+                                          console.log('cancel save')
+                                    }
 
                               }
                         ]
                         );
                         
                   } else {
-                        setTitles(titles.concat(setTitle + ','));
-                        storeTitles(titles.concat(setTitle + ','));
+                        if (titles.length > 0) {
+                              console.log('save list with new title with > 1 saved lists')
+                              setTitles(titles.concat(',' + setTitle));
+                              storeTitles(titles.concat(',' + setTitle));
+      
+                              setLists(lists.concat(list));
+                              storeList(list, setTitle);
+                        } else {
+                              console.log('first saved list')
+                              setTitles(titles.concat(setTitle));
+                              storeTitles(titles.concat(setTitle));
+      
+                              setLists(lists.concat(list));
+                              storeList(list, setTitle);
+                        }
 
-                        setLists(lists.concat(list));
-                        storeList(list, setTitle);
                   }
                   
                   
@@ -250,7 +266,7 @@ export default function MainScreen() {
             getTitles();
 
 
-      // used to delete saved titles and lists 
+      //    // used to delete saved titles and lists 
             // if (titles.length > 0) {
             //       titles.split(',').forEach((x) => {
             //             clearList(x);
@@ -272,12 +288,12 @@ export default function MainScreen() {
             setEnteringNumTimes(false);
             setChoiceMade(false);
             // console.log(titles.substring(0, 1))
-            if (titles.substring(0, 1).trim() == ',') {
-                  // console.log('true')
-                  setTitles(titles.slice(1, titles.length - 1));
-                  storeTitles(titles.slice(1, titles.length - 1));
-            }
-            console.log(titles);
+            // if (titles.substring(0, 1).trim() == ',') {
+            //       // console.log('true')
+            //       setTitles(titles.slice(1, titles.length - 1));
+            //       storeTitles(titles.slice(1, titles.length - 1));
+            // }
+            // console.log(titles);
       }, []);
 
       const renderList = ({item, index}) => {
@@ -309,12 +325,30 @@ export default function MainScreen() {
                                                             onPress: () => {
                                                                   clearList(item);
                                                                   var temp = titles.split(',').sort();
-                                                                  console.log("before" + temp)
-                                                                  temp.splice(index, 1);
-                                                                  
-                                                                  setTitles(temp.join(','));
-                                                                  console.log("after " + temp)
-                                                                  storeTitles(temp.join(','));
+                                                                  console.log("before: " + temp)
+                                                                  temp.splice(temp.indexOf(item), 1);
+                                                                  // temp.splice(index, 1);
+
+                                                                  // temp.forEach((x) => {
+                                                                  //       if (x.length == 0 || x == ' ') {
+                                                                  //             temp.splice(temp.indexOf(x), 1);
+                                                                  //       }
+                                                                  // })
+
+                                                                  if (titles.indexOf(',') == -1) {
+                                                                        temp = [];
+                                                                        setTitles("");
+                                                                        storeTitles("");
+                                                                        setRefresh(true);
+                                                                        setLoaded(false);
+                                                                        setLoading(false);
+                                                                  } else {
+                                                                        setTitles(temp.join(','));
+                                                                        console.log("after:  " + temp)
+                                                                        storeTitles(temp.join(','));
+                                                                  }
+
+
                                                             }
                                                       }, {
                                                             text: "No",
@@ -345,11 +379,15 @@ export default function MainScreen() {
                               onChangeText={(text) => setEntryNotEntered(text)}
                               value={entryNotEntered}
                               />
-                        <TouchableOpacity style={{paddingLeft: 5}} onPress={() => {
+                        <TouchableOpacity disabled={loading} style={{paddingLeft: 5}} onPress={() => {
                               setSaveLoad(true);
                         }}>
                               <View style={styles.saveLoadButton}>
-                                    <Text style={styles.buttonText}>Save/Load</Text>
+                                    {loading ? 
+                                    (<Text style={[styles.buttonText, {opacity: 0.2}]}>Save/Load</Text>) 
+                                    : 
+                                    (<Text style={styles.buttonText}>Save/Load</Text>)}
+                                    
                               </View>
                         </TouchableOpacity>
                   </View>
@@ -357,7 +395,7 @@ export default function MainScreen() {
                   <View style={styles.flatlistMainView}>
                         {loading ? <FlatList 
                               renderItem={renderList}
-                              data={titles.split(',').slice(0, titles.split(',').length - 1).sort()}
+                              data={titles.indexOf(',') == -1 && titles == "" ? [] : titles.split(',').sort()}
                               keyExtractor={(x, i) => (x + i)}
                               style={{width: screenSize.width - 10}}
                         />  
@@ -492,6 +530,7 @@ export default function MainScreen() {
                                                       setSaveLoad(false);
                                                       displayEntryMessage("No lists to load")
                                                 }
+                                                console.log('lists that can be loaded: ' + titles.split(',').sort())
                                           }} style={styles.loadSaveCancelButtons}>
                                                 <Text style={styles.buttonText}>Load</Text>
                                           </TouchableOpacity>
